@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# IDE0023: Utiliser le corps de bloc pour un opérateur de conversion
+dotnet_diagnostic.IDE0023.severity = silent

@@ -419,9 +419,7 @@ ASALocalRun/
 
 # editor config
 .editorconfig
-
-# include .app folders
-!*.App/
+.[Dd]otsettings.user
 
 obj/
 obj/*
