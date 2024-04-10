@@ -19,18 +19,18 @@
         <PackageTags>Http Query Querystring Uri EncodeURI URL</PackageTags>
         <Product>MrEfka.ToolBox.QueryString</Product>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>$(VersionPrefix)</Version>
+        <Version>1.0.1</Version>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\net7.0\ToolBox.QueryString.xml</DocumentationFile>
+      <DocumentationFile>bin\Release\net6.0\ToolBox.QueryString.xml</DocumentationFile>
       <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\net7.0\ToolBox.QueryString.xml</DocumentationFile>
+      <DocumentationFile>bin\Debug\net6.0\ToolBox.QueryString.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
