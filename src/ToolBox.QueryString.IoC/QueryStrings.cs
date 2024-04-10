@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MrEfka.ToolBox.QueryString;
 using MrEfka.ToolBox.QueryString.Configuration;
 
-namespace ToolBox.QueryString.IoC;
+namespace MrEfka.ToolBox.QueryString.IoC;
 
 /// <summary>
 /// Provides extension methods to register <see cref="IQueryStringHelper"/> into an IoC container.

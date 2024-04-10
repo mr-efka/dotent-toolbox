@@ -1,7 +1,9 @@
 using System.Collections;
+using System.Reflection;
 using MrEfka.ToolBox.Commons.Extensions;
 using MrEfka.ToolBox.QueryString.Configuration;
 using MrEfka.ToolBox.QueryString.Core;
+using MrEfka.ToolBox.QueryString.DataAnnotation;
 
 namespace MrEfka.ToolBox.QueryString;
 
@@ -12,14 +14,13 @@ public class QueryStringHelper: IQueryStringHelper
     private readonly QueryStringHelperConfiguration _configuration;
     
     ///<summary>Initializes a new instance of <see cref="QueryStringHelper"/> with the <see cref="QueryStringHelperConfiguration.Default"/> configuration.</summary>
-    public QueryStringHelper()
-    {
-        _configuration = QueryStringHelperConfiguration.Default;
-    }
+    public QueryStringHelper() => _configuration = QueryStringHelperConfiguration.Default;
+    
     ///<summary>Creates a new instance of <see cref="QueryStringHelper"/> with the given configuration.</summary>
     ///<param name="cfg"></param>
     public QueryStringHelper(QueryStringHelperConfiguration cfg) => _configuration = new QueryStringHelperConfiguration(cfg);
-    
+
+    #region Public APIs
     ///<summary>Builds query string from the provided data source <paramref name="o"/>.</summary>
     ///<param name="o">Source object to load query string values from.</param>
     ///<param name="name">If <paramref name="o"/> is a valid primitive type, this value should contain the key name of the query string entry. Otherwise, this value contains the root name for all elements/properties in <paramref name="o"/>. That means elements/properties will be nested according to this value.</param>
@@ -61,7 +62,7 @@ public class QueryStringHelper: IQueryStringHelper
         }
         
         // Handling other object types.
-        return string.Join('&', type.GetProperties().Where(p => p.CanRead)
+        return string.Join('&', type.GetProperties().Where(p => p.CanRead && !ShouldExcludeProperty(p))
             .Select(p => BuildQueryString(p.GetValue(o)!, name: BuildFurtherName(name, p.Name)))
             .Where(x => !string.IsNullOrEmpty(x))
         );
@@ -103,6 +104,7 @@ public class QueryStringHelper: IQueryStringHelper
     ///<summary>Builds query string from the provided key-value map.</summary>
     public string BuildQueryString(IDictionary<string, decimal> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
+    #endregion
     
     ///<summary>Builds array-like query string entry for a single key.</summary>
     ///<param name="key">Entry key</param>
@@ -151,6 +153,11 @@ public class QueryStringHelper: IQueryStringHelper
             : BuildQueryStringEntry(key, new PrimitiveType(string.Join(',', value)), sqbEncloseVal: true);
     }
 
+    #region Utils Methods
+    ///<summary>Handles null values in <see cref="PrimitiveType"/> according to the configured <see cref="NullValueHandlingStrategy"/>.</summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     private (string Content, bool Reject) ProcessNullValueHandling(PrimitiveType value)
     {
         if (value.IsNull())
@@ -165,6 +172,12 @@ public class QueryStringHelper: IQueryStringHelper
         return (value.ToString(_configuration.UseQuotedStrings!.Value), false);
     }
 
+    ///<summary>Build the key part of a querystring entry. Uses the parent name for nesting purposes.</summary>
+    /// <param name="parent">Base name to nest <paramref name="child"/> into.</param>
+    /// <param name="child">Current property name.</param>
+    /// <param name="index">While iterating on a collection of objects, this parameter helps to index items in the collection.</param>
+    /// <returns>Generated entry name</returns>
+    /// <exception cref="ArgumentOutOfRangeException">If invalid <see cref="QueryStringNestingStrategy"/> was defined in the configuration.</exception>
     private string BuildFurtherName(string parent, string child, int? index = null)
     {
         Func<string, string> converter = _configuration.NamingPolicy!.ConvertName;
@@ -183,4 +196,12 @@ public class QueryStringHelper: IQueryStringHelper
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+
+    private bool ShouldExcludeProperty(PropertyInfo? p)
+    {
+        if (p is null) return false;
+        return p.HasAttributesOfType<QsIgnoreAttribute>();
+    }
+    
+    #endregion
 }

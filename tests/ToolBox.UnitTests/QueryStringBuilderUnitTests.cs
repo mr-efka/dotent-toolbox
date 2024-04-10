@@ -1,5 +1,6 @@
 using MrEfka.ToolBox.QueryString;
 using MrEfka.ToolBox.QueryString.Configuration;
+using MrEfka.ToolBox.QueryString.DataAnnotation;
 
 namespace ToolBox.UnitTests;
 
@@ -142,6 +143,34 @@ public class QueryStringBuilderUnitTests
         Assert.AreNotEqual("Id=1&Name=Sampolo&Filters.Name=John&Filters.Date=2023-12-01", qs);
         Assert.IsTrue(qs.Length > baseName.Length);
         Assert.AreEqual(baseName, qs[..baseName.Length]);
+    }
+
+    [TestMethod]
+    public void BuildQueryString_WithObjectExcludeProps_Fails()
+    {
+        // Arrange
+        var data = new QsAttrsTestingModel()
+        {
+            Id = 1, Single = 2f, Model = new()
+        };
+        var helper = new QueryStringHelper();
+
+        // Act
+        var qs = helper.BuildQueryString(data);
+        
+        // Assert
+        Assert.IsFalse(string.IsNullOrEmpty(qs));
+        Assert.AreEqual("Id=1&Single=2", qs);
+    }
+
+    class QsAttrsTestingModel
+    {
+        public int Id { get; set; }
+        public float Single { get; set; }
+        [QsIgnore]
+        public QsBuilderTestingModel Model { get; set; }
+        [QsIgnore]
+        public char PrimitiveIgnored { get; set; }
     }
     
     class QsBuilderTestingModel

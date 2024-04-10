@@ -226,6 +226,43 @@ class QsBuilderTestingModel
   // Output : search_criteria[id]=1&search_criteria[name]=Sampolo&search_criteria[filters][name]=John&search_criteria[filters][date]=2023-12-01&search_criteria[filters][category_ids][0]=id&search_criteria[filters][category_ids][1]=SluG&search_criteria[filters][category_ids][2]=sku&search_criteria[filters][category_ids][3]=web uri&search_criteria[filters][array]=[]&search_criteria[filters][points][0][x]=1&search_criteria[filters][points][0][y]=1&search_criteria[filters][points][1][x]=2&search_criteria[filters][points][1][y]=2
 ```
 
+### Customizations
+
+#### 1. Properties exclusion
+At some points, you may not want all attributes in your model to be involved in querystring generation.
+If you are lazy enough - like me ;) - or you just don't want to create new objects (anonymous or additional model class) to pass to the **QueryStringHelper**, you can use the `QsIgnore` attribute to exclude all the properties you don't need in the querystring.
+
+Example :
+Let's consider the following class as our model
+
+```csharp
+  class QsAttrsTestingModel
+  {
+      public int Id { get; set; }
+      public float Single { get; set; }
+      [QsIgnore]
+      public QsBuilderTestingModel Model { get; set; }
+      [QsIgnore]
+      public char PrimitiveIgnored { get; set; }
+  }
+```
+The minimal code for generating querystring with this model can look like :
+```csharp
+  var data = new QsAttrsTestingModel()
+  {
+      Id = 1, Single = 2f, Model = new()
+  };
+  var helper = new QueryStringHelper();
+
+  var qs = helper.BuildQueryString(data);
+  
+  System.Console.WriteLine("Output : {0}", qs);
+
+  // Output : Id=1&Single=2
+
+```
+The presence of the **QsIgnore** attribute on *Model* and *PrimitiveIgnored* properties, notifies the helper to slightly ignore them.
+
 ## Authors
 
 - **Mr Efka** - _Initial work_ - [Mr efka](https://github.com/mr-efka)
