@@ -11,12 +11,12 @@
         <RootNamespace>MrEfka.ToolBox.QueryString</RootNamespace>
         <Title>Querystring Builder</Title>
         <Description>Helper module to easily generate querystrings in .Net applications.</Description>
+        <Copyright>MrEfka © 2024</Copyright>
         <PackageProjectUrl>https://github.com/mr-efka/dotent-toolbox</PackageProjectUrl>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <RepositoryUrl>https://github.com/mr-efka/dotent-toolbox</RepositoryUrl>
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>Http Query Querystring Uri EncodeURI URL</PackageTags>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <Product>MrEfka.ToolBox.QueryString</Product>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Version>$(VersionPrefix)</Version>

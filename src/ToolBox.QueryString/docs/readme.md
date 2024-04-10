@@ -10,6 +10,8 @@ I've started developing this package because I was supposed to consume a Web Api
 
 The goal of this module is to generate querystring from an object relying on some identified `PrimitiveType`s.
 
+> If you intend to use this package for an [AspNetCore](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core) application, better install the [MrEfka.ToolBox.QueryString.IoC](https://www.nuget.org/packages/MrEfka.ToolBox.QueryString.IoC) package, which provide useful methods to register the helper in you services collection.
+
 ## Primitive Types
 
 In the context of this module, a primitive type is one that instances can be directly written in a querystring without any transformation.
@@ -67,8 +69,8 @@ QueryStringHelperConfiguration exposes the following properties to customize the
 * **NullValueHandling** : Controls how the helper handles `null` values while building the query string
   * Type : enum `MrEfka.ToolBox.QueryString.Configuration.NullValueHandlingStrategy`
   * Possible values :
-    * `Ignore` : Empty collections field will not be append to the resulting query string.
-    * `Always` : Null value or empty collections field will be added to the resulting query string without value.
+    * `Ignore` : Null value field will not be append to the resulting query string.
+    * `Always` : Null value field will be added to the resulting query string without value.
     * `TextLower` : Null value field will be added to the resulting query string with value `null` as text.
     * `TextUpper` : Null value field will be added to the resulting query string with value `NULL` as text.
   * Default value : `NullValueHandlingStrategy.Ignore`
@@ -230,7 +232,7 @@ class QsBuilderTestingModel
 
 #### 1. Properties exclusion
 At some points, you may not want all attributes in your model to be involved in querystring generation.
-If you are lazy enough - like me ;) - or you just don't want to create new objects (anonymous or additional model class) to pass to the **QueryStringHelper**, you can use the `QsIgnore` attribute to exclude all the properties you don't need in the querystring.
+If you are lazy enough - like me :sweat_smile: - or you just don't want to create new objects (anonymous or additional model class) to pass to the **QueryStringHelper**, you can use the `QsIgnore` attribute to exclude all the properties you don't need in the querystring.
 
 Example :
 Let's consider the following class as our model
