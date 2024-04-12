@@ -197,10 +197,15 @@ public class QueryStringHelper: IQueryStringHelper
         };
     }
 
+    private string BuildFurtherName(string parent, PropertyInfo child, int? index = null)
+    {
+        child.GetCustomAttributes<QsNameAttribute>(false);
+    }
+
     private bool ShouldExcludeProperty(PropertyInfo? p)
     {
         if (p is null) return false;
-        return p.HasAttributesOfType<QsIgnoreAttribute>();
+        return p.HasAttributesOfType<QsIgnoreAttribute>(false);
     }
     
     #endregion
