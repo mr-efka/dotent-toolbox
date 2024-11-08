@@ -2,7 +2,7 @@
 
 ## Introduction
 
-ToolBox.Querystring string is a module of the MrEka.ToolBox, which provides a simple interface to easily generate query strings in .Net applications.
+ToolBox.Querystring string is a simple light module which provides a simple interface to easily generate query strings in .Net applications.
 "What a useless package is that again !!!??" you may think, and you are right. On [NuGet](https://nuget.org) they are thousands of libraries providing strong, robust and efficient ways to generate query strings.
 But unfortunately, I've found none which fits my needs.
 
@@ -89,6 +89,11 @@ QueryStringHelperConfiguration exposes the following properties to customize the
   * Possible value : **true**, **false**
   * Default value : **false**
   * Remarks : Setting this value to `false` may lead to unwanted behaviours when running in production. Please change this flag only for testing and debugging purposes.
+
+* **RenderEnumNames** : sets a value indicating whether enums should be rendered as int or as strings (raw enum name)
+  * Type : **bool**
+  * Possible value : **true**, **false**
+  * Default value : **false**
 
 ### Available APIs
 
@@ -264,6 +269,12 @@ The minimal code for generating querystring with this model can look like :
 
 ```
 The presence of the **QsIgnore** attribute on *Model* and *PrimitiveIgnored* properties, notifies the helper to slightly ignore them.
+
+## ToDos
+
+- Add a NullWhenAttribute : which will set an entry to null when a given condition is met.
+
+Of course, I am open to any other suggestions :)
 
 ## Authors
 

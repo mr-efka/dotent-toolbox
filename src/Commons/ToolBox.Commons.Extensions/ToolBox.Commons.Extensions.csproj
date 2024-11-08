@@ -4,8 +4,38 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageId>MrEfka.ToolBox.Commons.Extensions</PackageId>
+        <Authors>Mr Efka</Authors>
+        <Company>Mr Efka</Company>
         <AssemblyName>MrEfka.ToolBox.Commons.Extensions</AssemblyName>
         <RootNamespace>MrEfka.ToolBox.Commons.Extensions</RootNamespace>
+        <Description>Utils extension methods to speedup developments in .Net</Description>
+        <Copyright>MrEfka © 2024</Copyright>
+        <PackageProjectUrl>https://github.com/mr-efka/dotent-toolbox</PackageProjectUrl>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <RepositoryUrl>https://github.com/mr-efka/dotent-toolbox</RepositoryUrl>
+        <PackageTags>Extension Date String Object Enumerable Reflection Common</PackageTags>
+        <RepositoryType>GitHub</RepositoryType>
+        <Product>MrEfka.ToolBox.Commons.Extensions</Product>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <Title>ToolBox.Extensions</Title>
+        <SignAssembly>true</SignAssembly>
+        <VersionPrefix>$(VersionPrefix)</VersionPrefix>
+        <Version>1.0.0</Version>
+        <AssemblyOriginatorKeyFile>MrEfka.ToolBox.Commons.Extensions.sgnk.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\net6.0\ToolBox.Commons.Extensions.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\net6.0\ToolBox.Commons.Extensions.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\docs\readme.md" Pack="true" PackagePath="\" Visible="false"/>
+        <None Include="..\docs\LICENSE" Pack="true" PackagePath="" Visible="false"/>
+    </ItemGroup>
 </Project>

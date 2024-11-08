@@ -5,7 +5,7 @@ using MrEfka.ToolBox.QueryString.DataAnnotation;
 namespace ToolBox.UnitTests;
 
 [TestClass]
-public class QueryStringBuilderUnitTests
+public partial class QueryStringBuilderUnitTests
 {
     [TestMethod]
     public void BuildQueryString_WithPrimitiveNumber_Success()
@@ -177,7 +177,7 @@ public class QueryStringBuilderUnitTests
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public NestedClass? Filters { get; set; }
+        public NestedClass Filters { get; set; }
 
         public class NestedClass
         {

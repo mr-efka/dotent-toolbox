@@ -2,11 +2,10 @@ using System.Reflection;
 
 namespace MrEfka.ToolBox.Commons.Extensions;
 
-public static class Reflection
+///<summary>Provides utils functions for .Net reflection</summary>
+public static class Reflections
 {
-    /// <summary>
-    /// Checks whether the provided <paramref name="memberInfo"/> has attributes of type <typeparamref name="T"/> in his custom attributes collection.
-    /// </summary>
+    ///<summary>Checks whether the provided <paramref name="memberInfo"/> has attributes of type <typeparamref name="T"/> in his custom attributes collection.</summary>
     /// <typeparam name="T">Type of the attribute to check for.</typeparam>
     /// <param name="memberInfo">Member to evaluate.</param>
     /// <param name="inherit"><inheritdoc cref="MemberInfo.GetCustomAttributes(bool)"/></param>

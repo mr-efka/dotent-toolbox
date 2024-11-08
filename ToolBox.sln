@@ -6,6 +6,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBox.Commons.Extensions", "src\Commons\ToolBox.Commons.Extensions\ToolBox.Commons.Extensions.csproj", "{FB908FAB-0F55-4C80-9254-3AFC7BC8DA34}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commons", "Commons", "{E46EBFBA-DFCF-4E8F-9CA0-5B97372A6C9A}"
+	ProjectSection(SolutionItems) = preProject
+		src\Commons\docs\readme.md = src\Commons\docs\readme.md
+		src\Commons\docs\LICENSE = src\Commons\docs\LICENSE
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D69F2413-050D-4ED0-A73B-181E65FB0E51}"
 EndProject

@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Reflection;
-using MrEfka.ToolBox.Commons.Extensions;
 using MrEfka.ToolBox.QueryString.Configuration;
 using MrEfka.ToolBox.QueryString.Core;
 using MrEfka.ToolBox.QueryString.DataAnnotation;
+using MrEfka.ToolBox.QueryString.Utils;
 
 namespace MrEfka.ToolBox.QueryString;
 
@@ -18,27 +18,27 @@ public class QueryStringHelper: IQueryStringHelper
     
     ///<summary>Creates a new instance of <see cref="QueryStringHelper"/> with the given configuration.</summary>
     ///<param name="cfg"></param>
-    public QueryStringHelper(QueryStringHelperConfiguration cfg) => _configuration = new QueryStringHelperConfiguration(cfg);
+    public QueryStringHelper(QueryStringHelperConfiguration cfg) => _configuration = new QueryStringHelperConfiguration(cfg ?? throw new ArgumentNullException(nameof(cfg), ""));
 
     #region Public APIs
-    ///<summary>Builds query string from the provided data source <paramref name="o"/>.</summary>
-    ///<param name="o">Source object to load query string values from.</param>
-    ///<param name="name">If <paramref name="o"/> is a valid primitive type, this value should contain the key name of the query string entry. Otherwise, this value contains the root name for all elements/properties in <paramref name="o"/>. That means elements/properties will be nested according to this value.</param>
-    ///<returns></returns>
+    ///<inheritdoc />
     public string BuildQueryString(object? o, string name = null!)
     {
         // Handling null input
         if (o is null) return BuildQueryStringEntry(name, new PrimitiveType((string?)o));
         
         // Handling default Primitive values or valid parsable values.
-        if (PrimitiveType.TryParse(o, out var oAsPrimitive)) return BuildQueryStringEntry(name, oAsPrimitive!.Value);
+        if (PrimitiveType.TryParse(o, out var oAsPrimitive, useEnumName: _configuration.RenderEnumNames!.Value))
+        {
+            return BuildQueryStringEntry(name, oAsPrimitive!.Value);
+        }
 
         // Handling complex types : interfaces, collections, other objects.
         var type = o.GetType();
         //if (type.IsInterface) return BuildQueryStringEntry(name, new((string?)o));
 
         // Handling collections
-        var elementType = ReflectionUtility.GetCollectionElementType(type);
+        var elementType = ReflectionUtils.GetCollectionElementType(type);
         if (elementType is not null) // Means it is a collection
         {
             var collection = o as IEnumerable;
@@ -48,7 +48,7 @@ public class QueryStringHelper: IQueryStringHelper
                 var primitives = 
                 (
                     from object? item in collection! 
-                    select PrimitiveType.Parse(item)
+                    select PrimitiveType.Parse(item, useEnumName: _configuration.RenderEnumNames!.Value)
                 ).ToArray();
                 
                 return BuildQueryStringEntry(name, primitives, _configuration.UseArrayIndex!.Value);
@@ -63,45 +63,40 @@ public class QueryStringHelper: IQueryStringHelper
         
         // Handling other object types.
         return string.Join('&', type.GetProperties().Where(p => p.CanRead && !ShouldExcludeProperty(p))
-            .Select(p => BuildQueryString(p.GetValue(o)!, name: BuildFurtherName(name, p.Name)))
+            .Select(p => BuildQueryString(p.GetValue(o)!, name: BuildFurtherName(parent: name, child: p)))
             .Where(x => !string.IsNullOrEmpty(x))
         );
     }
     
-    ///<summary>Builds query string from the provided key-value map.</summary>
-    ///<remarks> This API assumes the values in the map are valid supported primitive types. </remarks>
-    ///<param name="data">Key-Value map to build query string from.</param>
-    ///<exception cref="T:System.InvalidCastException">If at least one value in data map is not a valid supported primitive type</exception>
-    ///<exception cref="T:System.ArgumentException">If at least one key in data map is <see langword="null"/> or empty (<see cref="System.String.Empty"/>).</exception>
-    ///<returns>Generated query string</returns>
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, object> data) =>
-        string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, PrimitiveType.Parse(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
-    
-    ///<summary>Builds query string from the provided key-value map.</summary>
+        string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, PrimitiveType.Parse(kv.Value, useEnumName: _configuration.RenderEnumNames!.Value))).Where(x=> !string.IsNullOrEmpty(x)));
+
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, byte> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
 
-    ///<summary>Builds query string from the provided key-value map.</summary>
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, sbyte> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
-    
-    ///<summary>Builds query string from the provided key-value map.</summary>
+
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, string> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
-    
-    ///<summary>Builds query string from the provided key-value map.</summary>
+
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, int> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
-    
-    ///<summary>Builds query string from the provided key-value map.</summary>
+
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, float> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
-    
-    ///<summary>Builds query string from the provided key-value map.</summary>
+
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, double> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
-    
-    ///<summary>Builds query string from the provided key-value map.</summary>
+
+    ///<inheritdoc />
     public string BuildQueryString(IDictionary<string, decimal> data) =>
         string.Join('&', data.Select(kv => BuildQueryStringEntry(kv.Key, new PrimitiveType(kv.Value))).Where(x=> !string.IsNullOrEmpty(x)));
     #endregion
@@ -172,16 +167,17 @@ public class QueryStringHelper: IQueryStringHelper
         return (value.ToString(_configuration.UseQuotedStrings!.Value), false);
     }
 
-    ///<summary>Build the key part of a querystring entry. Uses the parent name for nesting purposes.</summary>
-    /// <param name="parent">Base name to nest <paramref name="child"/> into.</param>
-    /// <param name="child">Current property name.</param>
-    /// <param name="index">While iterating on a collection of objects, this parameter helps to index items in the collection.</param>
+    /// <summary>Build the key part of a querystring entry. Uses the parent name for nesting purposes.</summary>
+    ///  <param name="parent">Base name to nest <paramref name="child"/> into.</param>
+    ///  <param name="child">Current property name.</param>
+    ///  <param name="index">While iterating on a collection of objects, this parameter helps to index items in the collection.</param>
+    /// <param name="childNameOverriden"></param>
     /// <returns>Generated entry name</returns>
-    /// <exception cref="ArgumentOutOfRangeException">If invalid <see cref="QueryStringNestingStrategy"/> was defined in the configuration.</exception>
-    private string BuildFurtherName(string parent, string child, int? index = null)
+    ///  <exception cref="ArgumentOutOfRangeException">If invalid <see cref="QueryStringNestingStrategy"/> was defined in the configuration.</exception>
+    private string BuildFurtherName(string parent, string child, int? index = null, bool childNameOverriden = true)
     {
         Func<string, string> converter = _configuration.NamingPolicy!.ConvertName;
-        child = converter(child);
+        child = childNameOverriden ? child : converter(child);
         
         if (parent is null or {Length: 0}) return child;
         parent = index is not null && (_configuration.UseArrayIndex!.Value)
@@ -197,10 +193,27 @@ public class QueryStringHelper: IQueryStringHelper
         };
     }
 
-    private bool ShouldExcludeProperty(PropertyInfo? p)
+    private string BuildFurtherName(string parent, MemberInfo child, int? index = null)
+    {
+        string childName;
+        try
+        {
+            IEnumerable<QsNameAttribute> attrs = child.GetCustomAttributes<QsNameAttribute>(false);
+            childName = attrs.FirstOrDefault()?.Name ?? child.Name;
+        }
+        // GetCustomAttributes may throw at least three type of exceptions.
+        // Handling two types not directly related to user input.
+        // Other errors will be thrown.
+        catch (NotSupportedException) { childName = child.Name; }
+        catch (TypeLoadException) { childName = child.Name; }
+
+        return BuildFurtherName(parent, childName, index);
+    }
+
+    private static bool ShouldExcludeProperty(MemberInfo? p)
     {
         if (p is null) return false;
-        return p.HasAttributesOfType<QsIgnoreAttribute>();
+        return p.HasAttributesOfType<QsIgnoreAttribute>(false);
     }
     
     #endregion

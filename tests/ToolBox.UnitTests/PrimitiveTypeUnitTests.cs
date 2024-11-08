@@ -93,7 +93,7 @@ public class PrimitiveTypeUnitTests
     public void PrimitiveType_IsPrimitiveWithValueTest_Null_Succeed()
     {
         // Arrange
-        Exception? o = null!;
+        Exception o = null!;
 
         // Act + Assert
         Assert.IsTrue(PrimitiveType.IsPrimitive(o));
@@ -115,5 +115,43 @@ public class PrimitiveTypeUnitTests
         // But <numberPrimitive> was instantiated as number.
         // Therefore, those two `null` values are considered as not equal.
         Assert.AreNotEqual(numberPrimitive, type); 
+    }
+
+    [TestMethod]
+    public void PrimitiveType_ParseTest_EnumAsTring_Fails()
+    {
+        // Arrange
+        SampleEnum sampleEnum = SampleEnum.Failled;
+        PrimitiveType enumPrimitive = new(SampleEnum.Failled.ToString());
+        int failedIntValue = (int)SampleEnum.Failled;
+
+        // Act
+        PrimitiveType type = PrimitiveType.Parse(sampleEnum, useEnumName: false);
+
+        // Assert
+        Assert.AreNotEqual(enumPrimitive, type);
+        Assert.AreEqual(failedIntValue, type);
+    }
+
+    [TestMethod]
+    public void PrimitiveType_ParseTest_EnumAsTring_Succeed()
+    {
+        // Arrange
+        SampleEnum sampleEnum = SampleEnum.Ok;
+        PrimitiveType enumPrimitive = new(SampleEnum.Ok.ToString());
+        int okIntValue = (int)SampleEnum.Ok;
+
+        // Act
+        PrimitiveType type = PrimitiveType.Parse(sampleEnum, useEnumName: true);
+
+        // Assert
+        Assert.AreNotEqual(okIntValue, type);
+        Assert.AreEqual(enumPrimitive, type);
+    }
+
+    enum SampleEnum
+    {
+        Ok = 1,
+        Failled = 2
     }
 }

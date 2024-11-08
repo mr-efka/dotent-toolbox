@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace MrEfka.ToolBox.Commons.Extensions;
+namespace MrEfka.ToolBox.QueryString;
 
 ///<summary>Provides utils functions to work with .Net strings</summary>
 public static class Strings
