@@ -18,6 +18,9 @@ public class QueryStringHelperConfiguration
     ///<summary>Gets or sets a value indicating whether uri components should be encoded or raw strings will be returned.</summary>
     ///<remarks>Setting this value to <see langword="false"/> may lead to unwanted behaviours when running in production. Please change this flag only for testing and debugging purposes.</remarks>
     public bool? EncodeUriComponents { get; set; } = true;
+    /// <summary>Gets or sets a value indicating whether enums should be rendered as int or as strings (raw enum name).</summary>
+    public bool? RenderEnumNames { get; set; } = false;
+
     /// <summary>Creates a new instance of <see cref="QueryStringHelperConfiguration"/>.</summary>
     public QueryStringHelperConfiguration() { } 
     /// <summary>Creates a new instance of <see cref="QueryStringHelperConfiguration"/> with the given configuration.</summary>
@@ -30,6 +33,7 @@ public class QueryStringHelperConfiguration
         NestingStrategy = cfg.NestingStrategy ?? Default.NestingStrategy;
         EncodeUriComponents = cfg.EncodeUriComponents ?? Default.EncodeUriComponents;
         UseQuotedStrings = cfg.UseQuotedStrings ?? Default.UseQuotedStrings;
+        RenderEnumNames = cfg.RenderEnumNames ?? Default.RenderEnumNames;
     }
 
     internal static readonly QueryStringHelperConfiguration Default = new()
@@ -40,7 +44,8 @@ public class QueryStringHelperConfiguration
         NamingPolicy = QueryStringNamingPolicy.Identity,
         UseArrayIndex = true,
         UseQuotedStrings = false,
-        EncodeUriComponents = true
+        EncodeUriComponents = true,
+        RenderEnumNames = false
     };
 
     internal const string NullTextLower = "null";

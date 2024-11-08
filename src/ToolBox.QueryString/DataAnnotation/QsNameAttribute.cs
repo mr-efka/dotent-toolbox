@@ -1,6 +1,6 @@
 namespace MrEfka.ToolBox.QueryString.DataAnnotation;
 
-///<summary>Specifies the name that is displayed in the generated querystring relatively to the target property. Warn about no check is performed this value. The caller is fully responsible of this value, which will be rawly rendered in the generated string (no conversion & no encoding)</summary>
+///<summary>Specifies the name that is displayed in the generated querystring relatively to the target property. Warn about no check is performed this value. The caller is fully responsible of this value, which will be rawly rendered in the generated string (no conversion and no encoding)</summary>
 ///<remarks>Note that using this attribute with <see cref="QsIgnoreAttribute"/> has no effect while is has lower priority than <see cref="QsIgnoreAttribute"/>.</remarks>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 public class QsNameAttribute: Attribute

@@ -1,4 +1,3 @@
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 namespace MrEfka.ToolBox.QueryString.Core;
 
 ///<summary>Represents a wrapper around a primitive type.</summary>
@@ -378,13 +377,13 @@ public readonly struct PrimitiveType : IEquatable<PrimitiveType>
     }
     ///<summary>Attempts to convert the provided given object (<paramref name="o"/>) to a valid<see cref="T:ToolBox.QueryString.PrimitiveType"/>.</summary>
     ///<param name="o">An object representing the value to convert.</param>
-    ///<param name="output">When this method returns, contains the <see cref="T:ToolBox.QueryString.PrimitiveType"/> value equivalent of the value contained in <paramref name="o" /> if the conversion succeeded, or <see langword="null" /> if the conversion failed. The conversion fails if the <paramref name="o" /> parameter is not an <see cref="Enum"/> or a <see cref="string"/> or a <see cref="Boolean"/> or any valid native number type. </param>
+    ///<param name="output">When this method returns, contains the <see cref="T:ToolBox.QueryString.PrimitiveType"/> value equivalent of the value contained in <paramref name="o" /> if the conversion succeeded, or <see langword="null" /> if the conversion failed. The conversion fails if the <paramref name="o" /> parameter is not an <see cref="Enum"/> or a <see cref="string"/> or a <see cref="bool"/> or any valid native number type. </param>
     ///<returns><see langword="true"/> if conversion succeeded. Otherwise, <see langword="false"/></returns>
-    public static bool TryParse(object o, out PrimitiveType? output)
+    public static bool TryParse(object o, out PrimitiveType? output, bool useEnumName = false)
     {
         try
         {
-            output = Parse(o);
+            output = Parse(o, useEnumName);
         }
         catch (Exception)
         {
@@ -396,14 +395,14 @@ public readonly struct PrimitiveType : IEquatable<PrimitiveType>
     ///<param name="o">Value to parse</param>
     ///<returns>The created <see cref="T:ToolBox.QueryString.PrimitiveType"/> if conversion succeeded.</returns>
     ///<exception cref="T:System.InvalidCastException">Thrown if conversion fails</exception>
-    public static PrimitiveType Parse(object? o)
+    public static PrimitiveType Parse(object? o, bool useEnumName = false)
     {
         // All null values are considered valid and treated as strings, as strings can have null references
         if (o is null) return new((string)null!);
 
         var type = o.GetType();
-        if (type.IsEnum) return new((int)o); // As enum can be parsed to integer numbers
-    
+        if (type.IsEnum) return useEnumName ? new(o.ToString()) : new((int)o); // As enum can be parsed to integer numbers
+
         var typeCode = Type.GetTypeCode(type);
 
         // TODO : Add support to handle implicit conversions to supported types.
@@ -438,7 +437,7 @@ public readonly struct PrimitiveType : IEquatable<PrimitiveType>
                 !IsPrimitive((underlyingType = Nullable.GetUnderlyingType(type)!))) // Check whether the underlying type is primitive.
                 throw new InvalidCastException("Unsupported primitive type");
         
-            return Parse(Convert.ChangeType(o, underlyingType));
+            return Parse(Convert.ChangeType(o, underlyingType), useEnumName);
         }
     }
     #endregion
